@@ -24,11 +24,18 @@
             border: 2px solid #3b82f6;
             border-radius: 12px;
             background-color: white;
+            overflow: hidden;
+        }
+
+        .widget-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         .live-result-button {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             background-color: #dc2626;
             color: white;
             font-weight: 800;
@@ -69,7 +76,7 @@
         }
 
         .result-panels.open {
-            max-height: 1800px;
+            max-height: 2000px;
             opacity: 1;
         }
 
@@ -113,16 +120,25 @@
 
 <div class="widget-container">
 
+    <!-- ⭐ BANNER RESTORED -->
+    <div class="widget-banner">
+        <img src="https://images.assettype.com/newsmalayalam/2025-11-14/3ola6enc/local-body-poll-banner"
+             alt="Election Banner"
+             onerror="this.src='https://placehold.co/1000x250/000/fff?text=Election+Banner';">
+    </div>
+
+    <!-- Toggle button -->
     <button id="toggleButton" class="live-result-button">
         <span class="live-dot"></span>
         LIVE RESULT CLICK HERE ▼
     </button>
 
-    <div id="dataStatus" class="text-center text-xs py-1 bg-gray-100 text-gray-500">
+    <div id="dataStatus"
+         class="text-center text-xs py-1 bg-gray-100 text-gray-500">
         Google Sheet ഡാറ്റ ലോഡ് ചെയ്യുന്നു...
     </div>
 
-    <!-- RESULT PANELS START -->
+    <!-- RESULT PANELS -->
     <div id="resultPanels" class="result-panels">
 
         <!-- Panchayath -->
@@ -191,13 +207,12 @@
         </div>
 
     </div>
-    <!-- RESULT PANELS END -->
 </div>
 
 <script>
-/****************************
-     1) Fetch Google Sheet
-*****************************/
+/*********************
+   Fetch Google Sheet
+**********************/
 async function fetchGoogleSheetData() {
     const url =
         "https://docs.google.com/spreadsheets/d/1reobM7KwPkNCHZbN3g8G5GkAFWEAtJ-G7pjHG2UH7vQ/gviz/tq?tqx=out:json";
@@ -205,13 +220,9 @@ async function fetchGoogleSheetData() {
     const response = await fetch(url);
     const text = await response.text();
 
-    // Google wraps JSON → remove it
     const json = JSON.parse(text.substring(47, text.length - 2));
 
-    const rows = json.table.rows;
-
-    // Convert rows → objects
-    return rows.map(r => ({
+    return json.table.rows.map(r => ({
         BODY: r.c[0]?.v || "",
         LDF: r.c[1]?.v || 0,
         UDF: r.c[2]?.v || 0,
@@ -220,12 +231,11 @@ async function fetchGoogleSheetData() {
     }));
 }
 
-/****************************
-     2) Update UI
-*****************************/
+/*********************
+   Update UI
+**********************/
 function updateResults(data) {
     data.forEach(item => {
-        // find the matching data-body panel
         const grid = document.querySelector(`.party-grid[data-body='${item.BODY}']`);
         if (!grid) return;
 
@@ -236,34 +246,32 @@ function updateResults(data) {
     });
 }
 
-/****************************
-     3) Load Data When Page Opens
-*****************************/
+/*********************
+   Load Data
+**********************/
 async function loadData() {
     try {
         const data = await fetchGoogleSheetData();
         updateResults(data);
 
         document.getElementById("dataStatus").textContent =
-            "Google Sheet ഡാറ്റ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു.";
-    } catch (err) {
+            "Google Sheet ഡാറ്റ അപ്ഡേറ്റ് ചെയ്തു.";
+    } catch (e) {
         document.getElementById("dataStatus").textContent =
             "ഡാറ്റ ലഭ്യമാക്കുന്നതിൽ പിശക് സംഭവിച്ചു.";
-        console.error(err);
     }
 }
 
 document.addEventListener("DOMContentLoaded", loadData);
 
-/****************************
-     4) Toggle Panels
-*****************************/
+/*********************
+   Toggle Button
+**********************/
 document.getElementById("toggleButton").addEventListener("click", () => {
     const panel = document.getElementById("resultPanels");
-    const btn = document.getElementById("toggleButton");
-
     panel.classList.toggle("open");
 
+    const btn = document.getElementById("toggleButton");
     const arrow = panel.classList.contains("open") ? "▲" : "▼";
 
     btn.innerHTML = `<span class="live-dot"></span> LIVE RESULT CLICK HERE ${arrow}`;
