@@ -256,10 +256,9 @@ async function fetchGoogleSheetData() {
 
     return json.table.rows.map(r => {
         const rawBody = r.c[0]?.v?.trim() || "";
-        const mappedBody = bodyNameMap[rawBody] || rawBody;
 
         return {
-            BODY: mappedBody,
+            BODY: rawBody,
             LDF: r.c[2]?.v || 0,
             UDF: r.c[3]?.v || 0,
             NDA: r.c[4]?.v || 0,
@@ -267,6 +266,7 @@ async function fetchGoogleSheetData() {
         };
     });
 }
+
 
 /*********************
    Update UI
