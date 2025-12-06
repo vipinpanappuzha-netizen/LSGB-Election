@@ -1,1155 +1,260 @@
 <!DOCTYPE html>
-
 <html lang="ml">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>തദ്ദേശ തെരഞ്ഞെടുപ്പ് ഫലം</title>
 
-    <!-- Include Tailwind CSS -->
-
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Chart.js CDN for data visualization (Included, though chart is hidden) -->
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-
     <style>
-
-        /* For Malayalam font */
-
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@100..900&display=swap');
 
-        
-
-        /* General styles */
-
         body {
-
             font-family: 'Noto Sans Malayalam', sans-serif;
-
-            background-color: #f0f4f8; /* Light background */
-
+            background-color: #f0f4f8;
         }
-
-        
 
         .widget-container {
-
             max-width: 1000px;
-
             margin: 20px auto;
-
             border: 2px solid #3b82f6;
-
             border-radius: 12px;
-
             overflow: hidden;
-
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-
             background-color: white;
-
         }
-
-
-
-        /* Banner style */
 
         .widget-banner img {
-
             width: 100%;
-
             height: auto;
-
-            display: block;
-
         }
-
-
-
-        /* New button container style */
 
         .button-container {
-
             display: flex;
-
-            justify-content: center; 
-
-            padding: 0; 
-
+            justify-content: center;
             background-color: white;
-
         }
-
-        
-
-        /* LIVE RESULT button style */
 
         .live-result-button {
-
             width: 100%;
-
-            max-width: 100%; 
-
             padding: 8px;
-
-            background-color: #dc2626; /* Deep Red (Red-700) */
-
+            background-color: #dc2626;
             color: white;
-
             font-weight: 800;
-
             border: none;
-
-            border-radius: 0; 
-
             cursor: pointer;
-
-            transition: background-color 0.3s, transform 0.1s;
-
-            text-transform: uppercase;
-
             font-size: 1.1rem;
-
-            box-shadow: none;
-
-            display: flex; 
-
+            text-transform: uppercase;
+            display: flex;
             align-items: center;
-
             justify-content: center;
-
         }
-
-        
-
-        .live-result-button:hover {
-
-            background-color: #b91c1c; /* Darker Red */
-
-            transform: translateY(0); 
-
-        }
-
-
-
-        /* Green beacon dot style */
 
         .live-dot {
-
             height: 12px;
-
             width: 12px;
-
-            background-color: #10b981; /* Emerald Green */
-
+            background-color: #10b981;
             border-radius: 50%;
-
             display: inline-block;
-
             margin-right: 10px;
-
             position: relative;
-
         }
-
-
-
-        /* Pulse (beacon) animation */
 
         .live-dot::after {
-
             content: '';
-
             position: absolute;
-
-            top: 0;
-
-            left: 0;
-
             height: 100%;
-
             width: 100%;
-
             border-radius: 50%;
-
             background-color: #10b981;
-
             animation: pulse 1.5s infinite;
-
             z-index: -1;
-
         }
-
-
 
         @keyframes pulse {
-
-            0% {
-
-                transform: scale(1);
-
-                opacity: 0.8;
-
-            }
-
-            100% {
-
-                transform: scale(2.0);
-
-                opacity: 0;
-
-            }
-
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
         }
-
-
-
-        /* Flex layout for party boxes */
-
-        .party-grid {
-
-            display: grid;
-
-            grid-template-columns: repeat(4, 1fr);
-
-            gap: 8px;
-
-            padding: 10px 10px;
-
-        }
-
-
-
-        /* Custom classes for the tint effect on each block */
-
-        .panchayath-header { background-color: #ef4444; } /* Red */
-
-        .corporation-header { background-color: #22c55e; } /* Green */
-
-        .nagarasabha-header { background-color: #3b82f6; } /* Blue */
-
-        .block-panchayath-header { background-color: #f97316; } /* Orange */
-
-        .jilla-panchayath-header { background-color: #8b5cf6; } /* Violet */
-
-        
-
-        .block-header {
-
-            padding: 12px 15px;
-
-            color: white;
-
-            font-size: 1.15rem;
-
-            font-weight: 700;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-        }
-
-        
-
-        /* Total Count Style */
-
-        .total-count {
-
-            font-size: 1rem;
-
-            font-weight: 800;
-
-            padding: 5px 10px;
-
-            background-color: #e5e7eb;
-
-            color: #374151;
-
-            border-radius: 6px;
-
-        }
-
-        
-
-        /* Party box style */
-
-        .party-box {
-
-            border: 1px solid #e5e7eb;
-
-            border-radius: 6px;
-
-            padding: 8px 0;
-
-            text-align: center;
-
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-
-            transition: transform 0.1s;
-
-        }
-
-
-
-        .party-box:hover {
-
-            transform: translateY(-2px);
-
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-        }
-
-
-
-        /* Increase party header size and make it black */
-
-        .party-name {
-
-            font-size: 1rem;
-
-            font-weight: 700;
-
-            margin-bottom: 2px;
-
-            color: #1f2937;
-
-        }
-
-
-
-        .count {
-
-            font-size: 1.8rem;
-
-            font-weight: 800;
-
-        }
-
-        
-
-        /* Light tint for each party */
-
-        .ldf-tint { background-color: #fef2f2; }
-
-        .udf-tint { background-color: #eff6ff; }
-
-        .nda-tint { background-color: #fffbeb; }
-
-        .oth-tint { background-color: #f3f4f6; }
-
-        
-
-        /* Colors for the count of each party */
-
-        .ldf-count { color: #dc2626; }
-
-        .udf-count { color: #1d4ed8; }
-
-        .nda-count { color: #fbbf24; }
-
-        .oth-count { color: #6b7280; }
-
-
-
-        /* Dropdown CSS for Result Panels */
 
         .result-panels {
-
-            transition: max-height 0.7s ease-in-out, opacity 0.5s ease-out;
-
+            transition: max-height .7s ease-in-out, opacity .5s ease-out;
             max-height: 1500px;
-
             opacity: 1;
-
             overflow: hidden;
-
         }
-
-
 
         .result-panels.hidden-results {
-
             max-height: 0;
-
             opacity: 0;
-
         }
 
-
-
-        /* Styles for the analysis section */
-
-        .analysis-section {
-
-            padding: 15px;
-
-            background-color: #f8f8ff;
-
-            border-top: 2px solid #3b82f6;
-
+        .party-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 10px;
         }
 
-        .analysis-output {
-
-            margin-top: 10px;
-
-            padding: 15px;
-
-            border: 1px dashed #3b82f6;
-
-            border-radius: 8px;
-
-            min-height: 80px;
-
-            background-color: #ffffff;
-
-            white-space: pre-wrap;
-
-            /* Animation for smooth reveal */
-
-            transition: all 0.3s ease-out;
-
-            opacity: 1;
-
-            max-height: 1000px;
-
+        .block-header {
+            padding: 12px 15px;
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
         }
 
-        /* Class used when analysis is hidden */
+        .panchayath-header { background-color: #ef4444; }
+        .corporation-header { background-color: #22c55e; }
+        .nagarasabha-header { background-color: #3b82f6; }
+        .block-panchayath-header { background-color: #f97316; }
+        .jilla-panchayath-header { background-color: #8b5cf6; }
 
-        .analysis-output.hidden {
-
-            opacity: 0;
-
-            max-height: 0;
-
-            padding-top: 0;
-
-            padding-bottom: 0;
-
-            border: none;
-
-            overflow: hidden;
-
-            margin-top: 0;
-
+        .total-count {
+            background: #e5e7eb;
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: #374151;
+            font-weight: 800;
         }
 
-
-
-        /* Chart Container Styling (Now hidden) */
-
-        .chart-container {
-
-            padding: 0; /* Padding removed */
-
+        .party-box {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 8px 0;
             background-color: white;
-
-            border-top: 1px solid #e5e7eb;
-
-            margin: 0;
-
-            display: none; /* Chart Container Hidden */
-
+            text-align: center;
         }
 
+        .party-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
 
+        .count {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
 
+        .ldf-tint { background-color: #fef2f2; }
+        .udf-tint { background-color: #eff6ff; }
+        .nda-tint { background-color: #fffbeb; }
+        .oth-tint { background-color: #f3f4f6; }
+
+        .ldf-count { color: #dc2626; }
+        .udf-count { color: #1d4ed8; }
+        .nda-count { color: #fbbf24; }
+        .oth-count { color: #6b7280; }
     </style>
-
 </head>
 
 <body>
 
-
-
 <div class="widget-container">
 
-    
-
-    <!-- Banner - New URL -->
-
+    <!-- Banner -->
     <div class="widget-banner">
-
-        <img src="https://images.assettype.com/newsmalayalam/2025-11-14/3ola6enc/local-body-poll-banner" alt="തദ്ദേശ തെരഞ്ഞെടുപ്പ് ബാനർ" onerror="this.onerror=null;this.src='https://placehold.co/1000x250/000/fff?text=Election+Banner+Placeholder';">
-
+        <img src="https://images.assettype.com/newsmalayalam/2025-11-14/3ola6enc/local-body-poll-banner"
+             alt="Election Banner"
+             onerror="this.src='https://placehold.co/1000x250/000/fff?text=Election+Banner';">
     </div>
 
-
-
-    <!-- LIVE RESULT Button Container -->
-
+    <!-- LIVE BUTTON -->
     <div class="button-container">
-
         <button id="liveResultButton" class="live-result-button">
-
-            <!-- Green beacon dot -->
-
-            <span class="live-dot"></span>
-
-            LIVE RESULT CLICK HERE ▼
-
+            <span class="live-dot"></span> LIVE RESULT CLICK HERE ▼
         </button>
-
     </div>
 
-    
+    <div id="dataStatus" class="text-center text-xs py-1 text-gray-500 bg-gray-100">
+        ഡാറ്റ സ്റ്റാറ്റിക് ആണ്.
+    </div>
 
-    <!-- Data Loading Status -->
-
-    <div id="dataStatus" class="text-center text-xs py-1 text-gray-500 bg-gray-100">ഡാറ്റാ സ്റ്റാറ്റിക്: എല്ലാ ഫലങ്ങളും 0 ആയി സജ്ജീകരിച്ചിരിക്കുന്നു.</div>
-
-
-
-
-
-    <!-- Result Panels Container - Hidden by default -->
-
+    <!-- Result Panels -->
     <div id="resultPanels" class="result-panels hidden-results">
 
-
-
-        <!-- 1. Panchayath (Total 941) -->
-
+        <!-- Panchayath -->
         <div class="result-block">
-
             <div class="block-header panchayath-header">
-
-                <span>പഞ്ചായത്ത്</span>
-
-                <span class="total-count">Total 941</span>
-
+                <span>പഞ്ചായത്ത്</span><span class="total-count">Total 941</span>
             </div>
-
             <div class="party-grid" data-body="പഞ്ചായത്ത്" data-total="941">
-
-                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count" data-party="LDF">0</div></div>
-
-                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count" data-party="UDF">0</div></div>
-
-                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count" data-party="NDA">0</div></div>
-
-                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count" data-party="OTH">0</div></div>
-
+                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count">0</div></div>
+                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count">0</div></div>
+                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count">0</div></div>
+                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count">0</div></div>
             </div>
-
         </div>
 
-        
-
-        <!-- 2. Corporation (Total 6) -->
-
+        <!-- Corporation -->
         <div class="result-block">
-
             <div class="block-header corporation-header">
-
-                <span>കോർപ്പറേഷൻ</span>
-
-                <span class="total-count">Total 6</span>
-
+                <span>കോർപ്പറേഷൻ</span><span class="total-count">Total 6</span>
             </div>
-
             <div class="party-grid" data-body="കോർപ്പറേഷൻ" data-total="6">
-
-                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count" data-party="LDF">0</div></div>
-
-                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count" data-party="UDF">0</div></div>
-
-                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count" data-party="NDA">0</div></div>
-
-                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count" data-party="OTH">0</div></div>
-
+                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count">0</div></div>
+                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count">0</div></div>
+                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count">0</div></div>
+                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count">0</div></div>
             </div>
-
         </div>
 
-        
-
-        <!-- 3. Nagarasabha (Total 87) -->
-
+        <!-- Nagarasabha -->
         <div class="result-block">
-
             <div class="block-header nagarasabha-header">
-
-                <span>നഗരസഭ</span>
-
-                <span class="total-count">Total 87</span>
-
+                <span>നഗരസഭ</span><span class="total-count">Total 87</span>
             </div>
-
             <div class="party-grid" data-body="നഗരസഭ" data-total="87">
-
-                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count" data-party="LDF">0</div></div>
-
-                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count" data-party="UDF">0</div></div>
-
-                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count" data-party="NDA">0</div></div>
-
-                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count" data-party="OTH">0</div></div>
-
+                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count">0</div></div>
+                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count">0</div></div>
+                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count">0</div></div>
+                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count">0</div></div>
             </div>
-
         </div>
 
-        
-
-        <!-- 4. Block Panchayath (Total 152) -->
-
+        <!-- Block Panchayath -->
         <div class="result-block">
-
             <div class="block-header block-panchayath-header">
-
-                <span>ബ്ലോക്ക് പഞ്ചായത്ത്</span>
-
-                <span class="total-count">Total 152</span>
-
+                <span>ബ്ലോക്ക് പഞ്ചായത്ത്</span><span class="total-count">Total 152</span>
             </div>
-
             <div class="party-grid" data-body="ബ്ലോക്ക് പഞ്ചായത്ത്" data-total="152">
-
-                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count" data-party="LDF">0</div></div>
-
-                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count" data-party="UDF">0</div></div>
-
-                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count" data-party="NDA">0</div></div>
-
-                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count" data-party="OTH">0</div></div>
-
+                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count">0</div></div>
+                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count">0</div></div>
+                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count">0</div></div>
+                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count">0</div></div>
             </div>
-
         </div>
 
-
-
-        <!-- 5. Jilla Panchayath (Total 14) -->
-
+        <!-- Jilla Panchayath -->
         <div class="result-block">
-
             <div class="block-header jilla-panchayath-header">
-
-                <span>ജില്ല പഞ്ചായത്ത്</span>
-
-                <span class="total-count">Total 14</span>
-
+                <span>ജില്ല പഞ്ചായത്ത്</span><span class="total-count">Total 14</span>
             </div>
-
             <div class="party-grid" data-body="ജില്ല പഞ്ചായത്ത്" data-total="14">
-
-                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count" data-party="LDF">0</div></div>
-
-                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count" data-party="UDF">0</div></div>
-
-                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count" data-party="NDA">0</div></div>
-
-                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count" data-party="OTH">0</div></div>
-
+                <div class="party-box ldf-tint"><div class="party-name">LDF</div><div class="count ldf-count">0</div></div>
+                <div class="party-box udf-tint"><div class="party-name">UDF</div><div class="count udf-count">0</div></div>
+                <div class="party-box nda-tint"><div class="party-name">NDA</div><div class="count nda-count">0</div></div>
+                <div class="party-box oth-tint"><div class="party-name">OTH</div><div class="count oth-count">0</div></div>
             </div>
-
         </div>
-
     </div>
-
-    <!-- End of resultPanels -->
-
-
-
-    <!-- New Chart Visualization Section - Chart section is completely omitted -->
-
-    <div class="chart-container" style="display: none;">
-
-        <h3 class="text-xl font-bold text-center mb-4 text-gray-800">ആകെ ഫലങ്ങളുടെ താരതമ്യം (Summary Tally)</h3>
-
-        <!-- Canvas element for the Chart -->
-
-        <canvas id="overallTallyChart"></canvas>
-
-    </div>
-
-
-
-
-
-    <!-- Gemini API Powered Analysis Section -->
-
-    <div class="analysis-section">
-
-        <button id="analyzeButton" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300">
-
-            തെരഞ്ഞെടുപ്പ് വിശകലനം ✨
-
-        </button>
-
-        <!-- Analysis output dropdown, hidden until analysis is complete -->
-
-        <div id="analysisOutput" class="analysis-output text-sm text-gray-800 hidden">
-
-            <!-- Analysis will appear here -->
-
-        </div>
-
-    </div>
-
-    
-
 </div>
 
-
-
-<!-- 
-
-    ================================================================================
-
-    STEP 1: DATA INJECTION POINT (Data Injection)
-
-    
-
-    To inject data from Quintype, you must dynamically generate the content of the ELECTION_DATA 
-
-    variable in this script block using live results from your CMS/Templating system.
-
-    
-
-    For testing, zero data is provided.
-
-    ================================================================================
-
--->
-
 <script>
-
-    // Data Structure: [
-
-    //    { BODY: 'PANCHAYATH', LDF: 540, UDF: 350, NDA: 25, OTH: 26 },
-
-    //    ...
-
-    // ]
-
-    window.ELECTION_DATA = [
-
-        { BODY: 'PANCHAYATH', LDF: 0, UDF: 0, NDA: 0, OTH: 0 },
-
-        { BODY: 'CORPORATION', LDF: 0, UDF: 0, NDA: 0, OTH: 0 },
-
-        { BODY: 'NAGARASABHA', LDF: 0, UDF: 0, NDA: 0, OTH: 0 },
-
-        { BODY: 'BLOCK PANCHAYATH', LDF: 0, UDF: 0, NDA: 0, OTH: 0 },
-
-        { BODY: 'DISTRICT PANCHAYATH', LDF: 0, UDF: 0, NDA: 0, OTH: 0 }
-
-    ];
-
-    
-
-    // Update timestamp here (e.g., from Quintype)
-
-    window.ELECTION_DATA_TIMESTAMP = "സ്റ്റാറ്റിക് ഡാറ്റ (പുറത്ത് നിന്ന് ലോഡ് ചെയ്ത സമയം)";
-
-</script>
-
-
-
-<script>
-
-    // --- Data Source and Gemini API Configuration ---
-
-    const GEMINI_MODEL = 'gemini-2.5-flash-preview-09-2025';
-
-    const API_KEY = ""; // Empty API Key will be handled by the environment
-
-
-
-    // Variable to hold the Chart.js instance (No longer used)
-
-    let overallChartInstance = null;
-
-
-
-    // --- Utility Functions ---
-
-
-
-    // External fetching is disabled in this implementation
-
-    async function exponentialBackoffFetch(url, options, maxRetries = 5) {
-
-        throw new Error("External data fetching is disabled. Using inline data.");
-
-    }
-
-
-
-
-
-    // Function to extract current results from the DOM (used for Gemini Analysis)
-
-    function getCurrentResults() {
-
-        const results = {};
-
-        const grids = document.querySelectorAll('.party-grid');
-
-        
-
-        grids.forEach(grid => {
-
-            const bodyName = grid.dataset.body;
-
-            const total = parseInt(grid.dataset.total, 10);
-
-            
-
-            const bodyResults = { Total: total }; // Use capitalized 'Total' for JSON output clarity
-
-            grid.querySelectorAll('.count').forEach(countDiv => {
-
-                const party = countDiv.dataset.party;
-
-                // Ensure to parse data as integers
-
-                bodyResults[party] = parseInt(countDiv.textContent, 10); 
-
-            });
-
-            results[bodyName] = bodyResults;
-
-        });
-
-        return results;
-
-    }
-
-
-
-    // --- Data Processing ---
-
-
-
-    // Now reads data from the global ELECTION_DATA variable.
-
-    function updateResults(data) {
-
-        // Mapping of English body name to Malayalam display name
-
-        const bodyMap = {
-
-            'PANCHAYATH': 'പഞ്ചായത്ത്',
-
-            'CORPORATION': 'കോർപ്പറേഷൻ',
-
-            'NAGARASABHA': 'നഗരസഭ',
-
-            'BLOCK PANCHAYATH': 'ബ്ലോക്ക് പഞ്ചായത്ത്',
-
-            'DISTRICT PANCHAYATH': 'ജില്ല പഞ്ചായത്ത്'
-
-        };
-
-
-
-        const partyOrder = ['LDF', 'UDF', 'NDA', 'OTH'];
-
-        
-
-        // Aggregate totals for the overall tally
-
-        const totalTally = { LDF: 0, UDF: 0, NDA: 0, OTH: 0 }; 
-
-        
-
-        // Check if data is available and is an array
-
-        if (!Array.isArray(data)) {
-
-            document.getElementById('dataStatus').textContent = "ഡാറ്റാ ലോഡിംഗ് പിശക്: ഇൻലൈൻ ഡാറ്റാ വേരിയബിൾ ശരിയല്ല.";
-
-            return;
-
-        }
-
-
-
-        data.forEach(item => {
-
-            const bodyValue = item.BODY; 
-
-            const malayalamBodyName = bodyMap[bodyValue.toUpperCase()];
-
-            
-
-            if (malayalamBodyName) {
-
-                const grid = document.querySelector(`.party-grid[data-body="${malayalamBodyName}"]`);
-
-                if (grid) {
-
-                    partyOrder.forEach(party => {
-
-                        const countElement = grid.querySelector(`.count[data-party="${party}"]`);
-
-                        if (countElement) {
-
-                            // Read count directly from the injected data object (it should be a number)
-
-                            const count = item[party] || 0; 
-
-                            countElement.textContent = count;
-
-                            totalTally[party] += count; // Retain tally for potential future use (or analysis button)
-
-                        }
-
-                    });
-
-                }
-
-            }
-
-        });
-
-
-
-        // Update data status in Malayalam
-
-        document.getElementById('dataStatus').textContent = `ഡാറ്റാ ലോഡുചെയ്തു: ${window.ELECTION_DATA_TIMESTAMP || 'ഇൻലൈൻ ഡാറ്റ'}`;
-
-    }
-
-
-
-
-
-    // Function to retrieve data (now from the global variable)
-
-    async function fetchAndProcessData() {
-
-        try {
-
-            const data = window.ELECTION_DATA;
-
-            if (!data) {
-
-                 document.getElementById('dataStatus').textContent = "പിശക്: ELECTION_DATA വേരിയബിൾ കണ്ടെത്തിയില്ല.";
-
-                 return;
-
-            }
-
-            updateResults(data);
-
-        } catch (error) {
-
-            console.error("Data Process Error:", error);
-
-            document.getElementById('dataStatus').textContent = `ഡാറ്റാ സജ്ജീകരിക്കുന്നതിൽ പിശക്: ${error.message}`;
-
-            document.getElementById('dataStatus').classList.add('text-red-600');
-
-        }
-
-    }
-
-
-
-    // --- Chart Rendering Function (Placeholder) ---
-
-
-
-    // Function is now a placeholder as the chart container is hidden
-
-    function renderCharts(tally) {
-
-        // Since the chart element is hidden, we just skip the rendering logic.
-
-        console.log("Chart rendering skipped as the chart container is hidden.");
-
-    }
-
-
-
-    // --- Gemini API Analysis Function ---
-
-
-
-    async function generateAnalysis() {
-
-        const analyzeButton = document.getElementById('analyzeButton');
-
-        const outputDiv = document.getElementById('analysisOutput');
-
-
-
-        analyzeButton.disabled = true;
-
-        
-
-        // Show loading message in Malayalam
-
-        outputDiv.classList.remove('hidden');
-
-        outputDiv.innerHTML = '<div class="text-center py-4 text-indigo-600 font-medium">വിശകലനം തയ്യാറാക്കുന്നു... <span class="animate-pulse">...</span></div>';
-
-
-
-        const currentResults = getCurrentResults();
-
-        
-
-        // System prompt and user query construction
-
-        const systemPrompt = "You are an experienced political analyst specializing in Kerala local body elections. Your task is to provide a brief, professional, high-level summary and projection based on the raw data provided. The analysis must be strictly in Malayalam and professional in a single paragraph, focusing on the implications of the distribution across different body types (Panchayats, Corporations, etc.) based on the actual seat counts. Use the data exactly as provided.";
-
-        
-
-        const userQuery = `Analyze the current results for the Kerala Local Body Elections and provide an initial high-level projection and analysis. Note the trends across different types of local bodies. \n\nRaw Data:\n${JSON.stringify(currentResults, null, 2)}`;
-
-
-
-        const payload = {
-
-            contents: [{ parts: [{ text: userQuery }] }],
-
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-
-        };
-
-        
-
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${API_KEY}`;
-
-
-
-        try {
-
-            const response = await fetch(apiUrl, {
-
-                method: 'POST',
-
-                headers: { 'Content-Type': 'application/json' },
-
-                body: JSON.stringify(payload)
-
-            });
-
-
-
-            if (!response.ok) {
-
-                const errorText = await response.text();
-
-                throw new Error(`API response error: ${response.status} - ${errorText.substring(0, 100)}...`);
-
-            }
-
-
-
-
-
-            const result = await response.json();
-
-            const analysisText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-
-
-            if (analysisText) {
-
-                outputDiv.textContent = analysisText;
-
-            } else {
-
-                outputDiv.textContent = "വിശകലനം ലഭ്യമാക്കുന്നതിൽ പിശക് സംഭവിച്ചു. (Error: No response text)";
-
-            }
-
-
-
-        } catch (error) {
-
-            console.error("Gemini API Error:", error);
-
-            outputDiv.textContent = `വിശകലനം ലഭ്യമാക്കുന്നതിൽ പിശക് സംഭവിച്ചു: ${error.message}`;
-
-        } finally {
-
-            analyzeButton.disabled = false;
-
-        }
-
-    }
-
-    
-
-    // --- Event Listeners and Initialization ---
-
-
-
-    // Event listener for LIVE RESULT button
-
-    document.getElementById('liveResultButton').addEventListener('click', () => {
-
-        const resultPanels = document.getElementById('resultPanels');
-
-        const button = document.getElementById('liveResultButton');
-
-
-
-        // Toggle visibility class
-
-        resultPanels.classList.toggle('hidden-results');
-
-        
-
-        // Update button text with arrow
-
-        const arrow = resultPanels.classList.contains('hidden-results') ? '▼' : '▲';
-
-        button.innerHTML = `<span class="live-dot"></span>LIVE RESULT CLICK HERE ${arrow}`;
-
+    // Toggle panel
+    document.getElementById("liveResultButton").addEventListener("click", () => {
+        const panels = document.getElementById("resultPanels");
+        const btn = document.getElementById("liveResultButton");
+
+        panels.classList.toggle("hidden-results");
+
+        const arrow = panels.classList.contains("hidden-results") ? "▼" : "▲";
+        btn.innerHTML = `<span class="live-dot"></span> LIVE RESULT CLICK HERE ${arrow}`;
     });
-
-
-
-    // Event Listener for the Gemini analyze button
-
-    document.getElementById('analyzeButton').addEventListener('click', generateAnalysis);
-
-
-
-    // Initial Data Fetch on load
-
-    document.addEventListener('DOMContentLoaded', () => {
-
-        // Data processing is now based on the global variable
-
-        fetchAndProcessData();
-
-        
-
-        const button = document.getElementById('liveResultButton');
-
-        button.innerHTML = `<span class="live-dot"></span>LIVE RESULT CLICK HERE ▼`;
-
-
-
-        // If live updates are needed, an external process must update window.ELECTION_DATA
-
-    });
-
-    
-
 </script>
-
-
 
 </body>
-
 </html>
