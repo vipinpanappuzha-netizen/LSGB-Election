@@ -209,7 +209,19 @@
     </div>
 </div>
 
+
 <script>
+/*********************
+   Sheet → Widget Mapping
+**********************/
+const bodyNameMap = {
+    "Panchayat": "പഞ്ചായത്ത്",
+    "Corporation": "കോർപ്പറേഷൻ",
+    "Nagarasabha": "നഗരസഭ",
+    "Block Pan": "ബ്ലോക്ക് പഞ്ചായത്ത്",
+    "District Pan": "ജില്ല പഞ്ചായത്ത്"
+};
+
 /*********************
    Fetch Google Sheet
 **********************/
@@ -222,13 +234,18 @@ async function fetchGoogleSheetData() {
 
     const json = JSON.parse(text.substring(47, text.length - 2));
 
-    return json.table.rows.map(r => ({
-        BODY: r.c[0]?.v || "",
-        LDF: r.c[1]?.v || 0,
-        UDF: r.c[2]?.v || 0,
-        NDA: r.c[3]?.v || 0,
-        OTH: r.c[4]?.v || 0
-    }));
+    return json.table.rows.map(r => {
+        const rawBody = r.c[0]?.v?.trim() || "";
+        const mappedBody = bodyNameMap[rawBody] || rawBody;
+
+        return {
+            BODY: mappedBody,
+            LDF: r.c[2]?.v || 0,
+            UDF: r.c[3]?.v || 0,
+            NDA: r.c[4]?.v || 0,
+            OTH: r.c[5]?.v || 0
+        };
+    });
 }
 
 /*********************
@@ -247,35 +264,22 @@ function updateResults(data) {
 }
 
 /*********************
-   Load Data
+   Load Sheet Data
 **********************/
 async function loadData() {
     try {
         const data = await fetchGoogleSheetData();
         updateResults(data);
-
         document.getElementById("dataStatus").textContent =
             "Google Sheet ഡാറ്റ അപ്ഡേറ്റ് ചെയ്തു.";
     } catch (e) {
         document.getElementById("dataStatus").textContent =
-            "ഡാറ്റ ലഭ്യമാക്കുന്നതിൽ പിശക് സംഭവിച്ചു.";
+            "ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ പിശക്.";
     }
 }
 
 document.addEventListener("DOMContentLoaded", loadData);
 
-/*********************
-   Toggle Button
-**********************/
-document.getElementById("toggleButton").addEventListener("click", () => {
-    const panel = document.getElementById("resultPanels");
-    panel.classList.toggle("open");
-
-    const btn = document.getElementById("toggleButton");
-    const arrow = panel.classList.contains("open") ? "▲" : "▼";
-
-    btn.innerHTML = `<span class="live-dot"></span> LIVE RESULT CLICK HERE ${arrow}`;
-});
 </script>
 
 </body>
