@@ -290,15 +290,24 @@ async function loadData() {
     try {
         const data = await fetchGoogleSheetData();
         updateResults(data);
+
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
         document.getElementById("dataStatus").textContent =
-            "Google Sheet ഡാറ്റ അപ്ഡേറ്റ് ചെയ്തു.";
+            `Last Updated: ${timeString}`;
     } catch (e) {
         document.getElementById("dataStatus").textContent =
             "ഡാറ്റ ലോഡ് ചെയ്യുന്നതിൽ പിശക്.";
+        console.error(e);
     }
 }
 
-document.addEventListener("DOMContentLoaded", loadData);
+// Initial load + auto-refresh every 30 seconds
+document.addEventListener("DOMContentLoaded", () => {
+    loadData();
+    setInterval(loadData, 10000); // 30 seconds
+});
 
 </script>
 
